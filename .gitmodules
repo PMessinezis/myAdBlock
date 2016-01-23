@@ -1,0 +1,3 @@
+[submodule "jslib"]
+	path = jslib
+	url = git@bitbucket.org:RedocTsuj/jslib.git

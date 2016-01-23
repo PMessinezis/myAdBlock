@@ -14,8 +14,7 @@
           "default_title": "configure myAdBlock",      // optional; shown in tooltip
           "default_popup": "src/pages/popup.html"        // optional
     },
-  "background": {
-    "scripts": [  "src/js/myAdBlock.js" ],
+  "background": {    "scripts": [  "jslib/jquery.js", "jslib/jsutils.js", "src/js/myAdBlock.js" ],
     "persistent": true
   },
   "options_page": "src/pages/options.html",
@@ -27,15 +26,15 @@
     "https://*/* ",
     "http://*/*"
   ],
-  "web_accessible_resources": [ "src/js/popup.js",
-                                "src/js/options.js",
+  "web_accessible_resources": [ "jslib/jquery.js", "jslib/jsutils.js",
+                                "src/js/popup.js", "src/js/options.js",
                                 "src/inject/myAdBlock.js"
                               ] ,
   "content_scripts": [
     {
       "all_frames": true,
       "matches": [ "http://*/*" , "https://*/*" ],
-      "js": [ "src/js/myAdBlock.js" ],
+      "js": [ "jslib/jquery.js", "jslib/jsutils.js", "src/js/myAdBlock.js" ],
       "run_at": "document_start"
     }
 

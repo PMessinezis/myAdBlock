@@ -7,89 +7,33 @@ function actionLog(action,badHost){
 
 }
 
-function isArray(a){
-    var aType= varType(a);
-    return (aType  === '[object Array]' );
-}
-
-function isObject(o){
-    return (typeof (o)==="object");
-}
-
-function isBlank(o){return isEmpty(o);}
-function notBlank(o){return ! isBlank(o);}
-function notEmpty(o){return ! isEmpty(o);}
-
-function isObj(o){
-    var t=typeof(o);
-    var e=true;
-    var v=o;
-    t=t.toLowerCase();
-    if (t=="string") {
-        e=false
-    } else if ((t=="number") || (t=="function")) {
-        e=false;
-    } else if (t=="object")  {
-        e=true;
-    } else if ((v===null) || (v===undefined) ){
-        e=false;
-    } else if (! isEmpty(v.length) ){
-        e=true;
-    } else {
-        var c=0;
-        for (var x in v){c+=1;}
-        e=(c==0);
-    }
-    return e;
-}
-
-function isEmpty(o){
-    var t=typeof(o);
-    var e=true;
-    var v=o;
-    t=t.toLowerCase();
-    if (t=="string") v=o.trim();
-    if ((t=="number") || (t=="function")) {
-        e=false;
-    } else if ((v===null) || (v===undefined) ){
-        e=true;
-    } else if (! isEmpty(v.length) ){
-        e=v.length==0;
-    } else {
-        var c=0;
-        for (var x in v){c+=1;}
-        e=(c==0);
-    }
-    return e;
-}
-
-
 var URL_class=function (url) {
-
     var s
     var t
-    s = url.match(/(^https?:\/\/)/)
-    if (s) this.protocol = s[0];
-    s = url.match(/^https?:\/\/(.*?)\//)
-    if (s) {
-        s = s[1]
-        this.host = s.toLowerCase();
-        t = s.match(/(^.*?@)/)
-        if (t) {
-            this.credentials = t[1]
-            t = this.host
-            t = t.match(/.*@(.*)/)
-            if (t) this.host = t[1]
-        }
-        s = this.host
-        t = s.match(/(.+?)(:\d+)/)
-        if (t)
-            if (t[2]) {
-                this.host = t[1]
-                this.port = t[2]
+    if (url){
+        s = url.match(/(^https?:\/\/)/)
+        if (s) this.protocol = s[0];
+        s = url.match(/^https?:\/\/(.*?)\//)
+        if (s) {
+            s = s[1]
+            this.host = s.toLowerCase();
+            t = s.match(/(^.*?@)/)
+            if (t) {
+                this.credentials = t[1]
+                t = this.host
+                t = t.match(/.*@(.*)/)
+                if (t) this.host = t[1]
             }
-        s = url.match(/^https?:\/\/.*?(\/.*)$/)
-        if (s) this.therest = s[1]
+            s = this.host
+            t = s.match(/(.+?)(:\d+)/)
+            if (t)
+                if (t[2]) {
+                    this.host = t[1]
+                    this.port = t[2]
+                }
+            s = url.match(/^https?:\/\/.*?(\/.*)$/)
+            if (s) this.therest = s[1]
+        }
     }
 }
 
@@ -123,82 +67,70 @@ base_adRegEx=[
              //   /ytimg/ , //test
                 /adzerk/ ,
                 /googlesyndication/,
+                /\.mgid\./,
                 /wwwpromoter/
             ];
 
-var ADBLOCK_ENGINE=function(){
-
-this.base_adRegEx=base_adRegEx;
-
-};
-
 function scanNode(node,mode){
-    if (!node) {
-        node=this;
-        mode="LIVE"
+    var found=false;
+    if (node) {
+        if (!mode) mode="scan"
+        var attribs=["href","src"];
+        for( var attr of attribs) {
+            if (node.hasAttribute(attr)) {
+                var url = new URL_class(node.getAttribute(attr))
+                if (url && notBlank(url.host)) {
+                    for( var rex of base_adRegEx){
+                        if (url.host.match(rex)) {
+                            console.log("myAdBlock " + mode + " :" + url.host)
+                           // if (mode=="LIVE") { alert("got you")}
+                            node.setAttribute(attr, "javascript:void(0)")
+                            node.style.display ="none";
+                            actionLog()
+                            found=true;
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
     };
-    if (!mode) mode="scan"
-    if (node.hasAttribute("href")) {
-        var href = new URL_class(node.attributes["href"])
-        if (href && notBlank(href.host)) {
-            for( var rex of base_adRegEx){
-                if (href.host.match(rex)) {
-                    console.log("myAdBlock " + mode + " :" + href.host)
-                   // if (mode=="LIVE") { alert("got you")}
-                    node.attributes["href"] = "javascript:void(0)"
-                    node.style.display ="none";
-                    actionLog()
-                    return true
-                }
-            }
-        }
-    }
-    if (node.hasAttribute("src")){
-        var src = new URL_class(node.attributes["src"])
-        if (src && notBlank(src.host)) {
-            for( var rex of base_adRegEx){
-                if (src.host.match(rex)) {
-                    console.log("myAdBlock " + mode + " :" + src.host)
-                   // if (mode=="LIVE") { alert("got you")}
-                    node.attributes["src"] = "javascript:void(0)"
-                    node.style.display ="none";
-                    actionLog()
-                    return true
-                }
-            }
-        }
-    }
+    return found;
 }
 
 
-function scanLiveNode(){
-     var node=this;
-     console.log("livequery callback" + var_dump(this))
-     scanNode(node);;
-}
+var ADBLOCK_ENGINE=function(){
+    this.base_adRegEx=base_adRegEx;
+};
 
 ADBLOCK_ENGINE.prototype.scan=function(topNode) {
     //alert("loaded as xpi : " +  isLoadedAsXPI())
     var myloc = new URL_class(document.URL)
     if (!topNode) topNode=document;
     var all = topNode.getElementsByTagName("*");
+    var found=false;
     for (var i = 0, max = all.length; i < max; i++) {
-        scanNode(all[i]);
+        if (scanNode(all[i],"SCAN")) found=true;
     }
+    return found;
 }
-
 
 var myAdBlock=new ADBLOCK_ENGINE;
 
-function theDomHasLoaded(){
-    console.log("DOM loaded");
+function theDomIsLoading(){
+    console.log("DOM loading");
     myAdBlock.scan()
 }
 
+var timeOut;
 function pageFullyLoaded(){
-    console.log("DOM REALLY loaded");
-    myAdBlock.scan()
-    setTimeout(pageFullyLoaded, 1500)
+    //console.log("DOM REALLY loaded");
+    if (!timeOut)
+        timeOut=1000;
+    else
+        timeOut+=1000;
+    if (myAdBlock.scan()){ timeOut=1000}
+    setTimeout(pageFullyLoaded, timeOut)
 }
 
 function checkIt(request,b,c){
@@ -215,42 +147,53 @@ var u = request.url;
     }
 }
 
-var callback = function(details) {return checkIt(details)};
-var filter = {urls: ["<all_urls>"]};
-var opt_extraInfoSpec = ["blocking"];
+function checkMutation(mutation){
+    //console.log ("checking mutation " + mutation.type);
+    for (var i = 0; i < mutation.addedNodes.length; i++) {
+        var newNode=mutation.addedNodes[i];
+        //console.log(newNode.nodeName, newNode.tagName);
+        if (newNode.nodeName=="IFRAME" ) { //|| newNode.nodeName=="SCRIPT") {
+            myObserve(newNode);
+        }
+        if (newNode.hasAttribute){
+            if (newNode.hasAttribute("href") ||  newNode.hasAttribute("src")) {
+                scanNode(newNode,"LIVE-NODE")
+            }
+        };
+    }
+    if (mutation.type="attribute") {
+        if (mutation.attributeName=="href" || mutation.attributeName=="src")  {
+            scanNode(mutation.target,"LIVE-ATTRIB");
+        }
+    };
+}
+
+function checkMutations(mutations){
+    mutations.forEach( checkMutation )
+}
+
+function myObserve(node){
+    var observer = new WebKitMutationObserver( checkMutations );
+    console.log("Observing " + node.toString());
+    observer.observe(node, { subtree: true, childList: true, attributes: true });
+}
 
 console.log("Adding listeners " + location.host)
 
 if (chrome.webRequest) {
-     console.log("Adding webrequest listener " + location.host)
-     chrome.webRequest.onBeforeRequest.addListener(callback, filter, opt_extraInfoSpec);
+    console.log("Adding webrequest listener " + location.host)
+    var callback = function(details) {return checkIt(details)};
+    var filter = {urls: ["<all_urls>"]};
+    var opt_extraInfoSpec = ["blocking"];
+    chrome.webRequest.onBeforeRequest.addListener(callback, filter, opt_extraInfoSpec);
 } else {
     console.log("Adding element creation and document loaded listeners " + location.host)
-    theDomHasLoaded();
-    window.addEventListener("load", pageFullyLoaded, false);
-
-    var observer = new WebKitMutationObserver( function(mutations) {
-        mutations.forEach( function(mutation) {
-            for (var i = 0; i < mutation.addedNodes.length; i++) {
-                if (mutation.addedNodes[i].hasAttribute){
-                    if (mutation.addedNodes[i].hasAttribute("href") ||  mutation.addedNodes[i].hasAttribute("src")) {
-                        scanNode(mutation.addedNodes[i],"LIVE")
-                    }
-                };
-            }
-            if (mutation.type="attribute") {
-                if (mutation.attributeName=="href" || mutation.attributeName=="src")  {
-                    if ( (mutation.target[mutation.attributeName]!="javascript:void") && (mutation.target[mutation.attributeName].match(base_adRegEx))) {
-                        console.log("live blocking attribute: " ,mutation.target[mutation.attributeName])
-                        mutation.target[mutation.attributeName]="javascript:void"
-                        actionLog()
-                    }
-                }
-            };
-        })
-    });
-//    observer.observe(document, { subtree: true, characterData: true, childList: true, attributes: true });
-      observer.observe(document, { subtree: true, childList: true, attributes: true });
+    theDomIsLoading();
+    document.onreadystatechange = function () {
+        if (document.readyState == "complete") {
+            console.log("event fired") ; pageFullyLoaded(); }
+    };
+    myObserve(document);
 }
 
 function menuHandlerAB(e,t){
