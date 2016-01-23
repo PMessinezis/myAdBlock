@@ -1,0 +1,114 @@
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>My Page Buddy</title>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous"> -->
+ --> -->
+<!-- Latest compiled and minified JavaScript -->
+<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script> -->
+
+    <script src="../js/jquery.js"></script>
+    <script src="../js/moment.js"></script>
+	<script src="../js/jstorage.js"></script>
+	<script src="../js/jsutils.js"></script>
+	<script src="../js/options.js"></script>
+<style type="text/css">
+
+* {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+
+}
+
+body {
+     background-color:lightgray;
+     overflow:auto;
+}
+
+.narrow {
+    padding-right: 0px;
+    padding-left: 0px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+.topSpot{
+ flex:1;
+        height: inherit;
+}
+.topBar {
+    background-color: lightgray;
+}
+
+
+.rightborder{
+    border-right: lightgray;
+    border-width:4px;
+    border-style:groove;
+}
+.topborder{
+    border-top: lightgray;
+    border-width:3px;
+    border-style:groove;
+}
+
+.sideBar {
+    flex: 1;
+    width:80px;
+    background-color: lightgray;
+}
+
+.mainarea {
+}
+
+textarea {
+    height: 95%;
+    width: 100%;
+    font-family: Tahoma, sans-serif;
+    white-space: nowrap;
+    overflow: auto;.
+}
+.parent { display: -ms-flex; display: -webkit-flex; display: flex; }
+
+
+</style>
+
+
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row topBar narrow parent ">
+        <div class="col-md-1  narrow rightborder topSpot">
+            <a class="narrow" href="#"><b>My Page Buddy page</b></a>
+        </div>
+        <div class="col-md-11 narrow ">
+            <button id="list" class="">List </button>
+            <button id="showAll" class="">Show All</button>
+            <button id="saveAll" class="">Save</button>
+            <input type="file" id="fileInput" style="display:none"/>
+            <button id="upload" class="">Populate Storage from file</button>
+            <button id="feed" class="">Upload QDump Elements</button>
+            <button id="clearAll" class="">DELETE ALL !!!</button>
+        </div>
+    </div>
+    <div class="row topborder narrow parent" style="height=80%">
+        <div class="col-md-1  sidebar narrow rightborder ">
+            <!-- <div class="sideBar"> -->
+            sidebar
+            <!-- </div> -->
+        </div>
+        <div class="col-md-11  mainArea narrow ">
+            <textarea id="output"></textarea>
+        </div>
+    </div>
+
+</div>
+</body>
+
+</html>

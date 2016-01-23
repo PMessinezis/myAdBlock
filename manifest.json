@@ -1,0 +1,45 @@
+{
+  "name": "My ad blocker Chrome Extension",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "This extension was created by RedocTsuj",
+  "homepage_url": "https://bitbucket.org/RedocTsuj/myadblock",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "default_locale": "en",
+   "browser_action": {
+          "default_title": "configure myAdBlock",      // optional; shown in tooltip
+          "default_popup": "src/pages/popup.html"        // optional
+    },
+  "background": {
+    "scripts": [  "src/js/myAdBlock.js" ],
+    "persistent": true
+  },
+  "options_page": "src/pages/options.html",
+  "permissions": [
+    "storage",
+    "contentSettings", "contextMenus",
+    "notifications", "webRequest","webRequestBlocking",
+    "tabs", "unlimitedStorage",
+    "https://*/* ",
+    "http://*/*"
+  ],
+  "web_accessible_resources": [ "src/js/popup.js",
+                                "src/js/options.js",
+                                "src/inject/myAdBlock.js"
+                              ] ,
+  "content_scripts": [
+    {
+      "all_frames": true,
+      "matches": [ "http://*/*" , "https://*/*" ],
+      "js": [ "src/js/myAdBlock.js" ],
+      "run_at": "document_start"
+    }
+
+  ]
+}
+
+
