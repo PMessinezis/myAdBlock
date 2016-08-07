@@ -60,6 +60,7 @@ base_adRegEx=[
                 /^pagead/ ,
                 /^adserver/ ,
                 /^ad\./ ,
+                /^adsite\./ ,
                 /adservices/ ,
                 /steepto/ ,
                 /sparrowpics/ ,
