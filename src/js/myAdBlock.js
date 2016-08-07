@@ -67,6 +67,7 @@ base_adRegEx=[
              //   /ytimg/ , //test
                 /adzerk/ ,
                 /googlesyndication/,
+                /www\.facebook\.com\/plugins\//,
                 /\.mgid\./,
                 /wwwpromoter/
             ];
