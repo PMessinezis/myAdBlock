@@ -58,7 +58,7 @@ base_adRegEx=[
                 /adman\./ ,
                 /^googleads/ ,
                 /^pagead/ ,
-                /^adserver/ ,
+                /adserver/ ,
                 /^ad\./ ,
                 /^adsite\./ ,
                 /adservices/ ,
