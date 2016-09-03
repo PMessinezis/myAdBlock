@@ -62,8 +62,10 @@ base_adRegEx=[
                 /^ad\./ ,
                 /^adsite\./ ,
                 /adservices/ ,
+                /pagead\/js/,
                 /steepto/ ,
                 /sparrowpics/ ,
+                /\/ads\//,
                 /doubleclick/ ,
              //   /ytimg/ , //test
                 /adzerk/ ,
