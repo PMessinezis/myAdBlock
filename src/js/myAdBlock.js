@@ -1,106 +1,5 @@
 
-var myAdBlockCounter=0;
-function actionLog(action,badHost){
-    myAdBlockCounter+=1;
-    //chrome.browserAction.setBadgeBackgroundColor({color:[190, 190, 190, 230]});
-    if (chrome.browserAction) chrome.browserAction.setBadgeText({text:myAdBlockCounter.toString()});
 
-}
-
-var URL_class=function (url) {
-    var s
-    var t
-    if (url){
-        s = url.match(/(^https?:\/\/)/)
-        if (s) this.protocol = s[0];
-        s = url.match(/^https?:\/\/(.*?)\//)
-        if (s) {
-            s = s[1]
-            this.host = s.toLowerCase();
-            t = s.match(/(^.*?@)/)
-            if (t) {
-                this.credentials = t[1]
-                t = this.host
-                t = t.match(/.*@(.*)/)
-                if (t) this.host = t[1]
-            }
-            s = this.host
-            t = s.match(/(.+?)(:\d+)/)
-            if (t)
-                if (t[2]) {
-                    this.host = t[1]
-                    this.port = t[2]
-                }
-            s = url.match(/^https?:\/\/.*?(\/.*)$/)
-            if (s) this.therest = s[1]
-        }
-    }
-}
-
-URL_class.prototype.str = function() {
-    var s = ""
-            // protocol/credentials/host/port/therest
-    if (this.protocol) s = s + this.protocol
-    if (this.credentials) s = s + this.credentials
-    if (this.host) s = s + this.host
-    if (this.port) s = s + this.port;
-    if (this.therest) s = s + this.therest
-    return s;
-}
-
-URL_class.prototype.redirect = function(newhost, newport) {
-    if (newhost) this.host = newhost
-    if (newport) this.port = newport
-    return this;
-}
-
-base_adRegEx=[
-                /adman\./ ,
-                /^googleads/ ,
-                /^pagead/ ,
-                /adserver/ ,
-                /^ad\./ ,
-                /^adsite\./ ,
-                /adservices/ ,
-                /pagead\/js/,
-                /steepto/ ,
-                /sparrowpics/ ,
-                /\/ads\//,
-                /doubleclick/ ,
-             //   /ytimg/ , //test
-                /adzerk/ ,
-                /googlesyndication/,
-                /www\.facebook\.com\/plugins\//,
-                /\.mgid\./,
-                /wwwpromoter/
-            ];
-
-function scanNode(node,mode){
-    var found=false;
-    if (node) {
-        if (!mode) mode="scan"
-        var attribs=["href","src"];
-        for( var attr of attribs) {
-            if (node.hasAttribute(attr)) {
-                var url = new URL_class(node.getAttribute(attr))
-                if (url && notBlank(url.host)) {
-                    for( var rex of base_adRegEx){
-                        if (url.host.match(rex)) {
-                            console.log("myAdBlock " + mode + " :" + url.host)
-                           // if (mode=="LIVE") { alert("got you")}
-                            node.setAttribute(attr, "javascript:void(0)")
-                            node.style.display ="none";
-                            actionLog()
-                            found=true;
-                            continue;
-                        }
-                    }
-                }
-            }
-        }
-    };
-    return found;
-}
 
 
 var ADBLOCK_ENGINE=function(){
@@ -108,7 +7,6 @@ var ADBLOCK_ENGINE=function(){
 };
 
 ADBLOCK_ENGINE.prototype.scan=function(topNode) {
-    //alert("loaded as xpi : " +  isLoadedAsXPI())
     var myloc = new URL_class(document.URL)
     if (!topNode) topNode=document;
     var all = topNode.getElementsByTagName("*");
@@ -137,19 +35,7 @@ function pageFullyLoaded(){
     setTimeout(pageFullyLoaded, timeOut)
 }
 
-function checkIt(request,b,c){
-var u = request.url;
-    if(u) {
-  //  log("check:" + u);
-    for( var rex of base_adRegEx){
-        if ( u.match(rex)) {
-            console.log("stopping request to : " + u);
-            actionLog()
-            return { cancel: true}
-        }
-    }
-    }
-}
+
 
 function checkMutation(mutation){
     //console.log ("checking mutation " + mutation.type);
