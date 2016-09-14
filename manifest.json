@@ -1,6 +1,6 @@
 {
   "name": "My ad blocker Chrome Extension",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "manifest_version": 2,
   "description": "This extension was created by RedocTsuj",
   "homepage_url": "https://bitbucket.org/RedocTsuj/myadblock",
@@ -14,7 +14,12 @@
           "default_title": "configure myAdBlock",      // optional; shown in tooltip
           "default_popup": "src/pages/popup.html"        // optional
     },
-  "background": {    "scripts": [  "jslib/jquery.js", "jslib/jsutils.js", "src/js/myAdBlock.js" ],
+  "background": {    "scripts": [ "jslib/jquery.js", 
+                                  "jslib/jsutils.js", 
+                                  "src/js/url.js",
+                                  "src/js/lists.js", 
+                                  "src/js/myAdBlock.js" 
+                                ],
     "persistent": true
   },
   "options_page": "src/pages/options.html",
@@ -28,13 +33,20 @@
   ],
   "web_accessible_resources": [ "jslib/jquery.js", "jslib/jsutils.js",
                                 "src/js/popup.js", "src/js/options.js",
+                                "src/inject/url.js",
+                                "src/inject/lists.js",
                                 "src/inject/myAdBlock.js"
                               ] ,
   "content_scripts": [
     {
       "all_frames": true,
       "matches": [ "http://*/*" , "https://*/*" ],
-      "js": [ "jslib/jquery.js", "jslib/jsutils.js", "src/js/myAdBlock.js" ],
+      "js": [ "jslib/jquery.js", 
+              "jslib/jsutils.js", 
+              "src/js/url.js",
+              "src/js/lists.js",
+              "src/js/myAdBlock.js" 
+            ],
       "run_at": "document_start"
     }
 
