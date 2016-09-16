@@ -30,6 +30,44 @@ base_adRegEx=[
             ];
 
 
+JDBstr = '[  \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "adman\." },   \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "^googleads" }, \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "^pagead" }, \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "adserver" }, \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "^ad\." }, \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "^adsite\." }, \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "adservices" }, \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "pagead\/js" }, \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "steepto" }, \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "sparrowpics" }, \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "\/ads\/" }, \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "doubleclick" }, \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "adzerk" }, \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "googlesyndication" }, \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "www\.facebook\.com\/plugins\/" }, \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "\.mgid\." }, \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "wwwpromotr" } ] ';
+
+gJDBobj = null ;
+
+function JDBobj(){
+    if (gJDBobj == null) {
+        var JDB=fromJson(JDBstr);
+        console.log(JDB);        
+        for ( i=0 ; i< JDB.length ; i++ ) {
+            var J = JDB[i];
+            JDB[i].location_rx= new RegExp(J.location_rx);
+            JDB[i].node_rx= new RegExp(J.node_rx);
+            JDB[i].link_rx= new RegExp(J.link_rx);
+        }
+        console.log(JDB);        
+    }
+    return gJDBobj ;
+}
+
+
+
 function checkIt(request,b,c){
 var u = request.url;
     if(u) {
