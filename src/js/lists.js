@@ -1,14 +1,32 @@
 // handle lists (blacklist and whitelist) as well as init from central web server
 
-var myAdBlockCounter=0;
-function actionLog(action,badHost){
-    myAdBlockCounter+=1;
-    //chrome.browserAction.setBadgeBackgroundColor({color:[190, 190, 190, 230]});
-    if (chrome.browserAction) chrome.browserAction.setBadgeText({text:myAdBlockCounter.toString()});
 
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    console.log(sender.tab ?
+                "from a content script:" + sender.tab.url :
+                "from the extension");
+    if (request.message == "incrementBadgeCounter")
+      incrementBadgeCounter({color:[240, 0, 0, 125]});
+  });
+
+
+var myAdBlockCounter=0;
+function incrementBadgeCounter(color){
+    myAdBlockCounter+=1;
+    if (chrome.browserAction){
+         if (color) {
+            chrome.browserAction.setBadgeBackgroundColor(color);
+        } else {
+            chrome.browserAction.setBadgeBackgroundColor({color:[200, 0, 0, 255]});
+        }
+        chrome.browserAction.setBadgeText({text:myAdBlockCounter.toString()});
+    } else {
+        chrome.runtime.sendMessage({message: "incrementBadgeCounter"});
+    }
 }
 
-base_adRegEx=[
+/*base_adRegEx=[
                 /adman\./ ,
                 /^googleads/ ,
                 /^pagead/ ,
@@ -29,6 +47,7 @@ base_adRegEx=[
                 /wwwpromoter/
             ];
 
+*/
 
 JDBstr = '[  \
                { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "adman\." },   \
@@ -87,7 +106,7 @@ function JDBWLobj(){
 }
 
 
-function newCheckIt(request,b,c){
+function checkIt(request,b,c){
 var u = request.url;
 var w = window.location.href;
     for( var i=0; i<JDBWLobj().length; i++) {
@@ -103,24 +122,10 @@ var w = window.location.href;
             var rex =J.link_rx;
             if ( u.match(rex)) {
                 console.log("new checking - caught : " + u,rex);
+                incrementBadgeCounter()
                 return { cancel: true}
             }
         }
-    }
-}
-
-function checkIt(request,b,c){
-var newRes=newCheckIt(request,b,c) ;
-var u = request.url;
-    if(u) {
-  //  log("check:" + u);
-    for( var rex of base_adRegEx){
-        if ( u.match(rex)) {
-            console.log("stopping request to : " + u);
-            actionLog()
-            return { cancel: true}
-        }
-    }
     }
 }
 
@@ -129,18 +134,21 @@ function scanNode(node,mode){
     var found=false;
     if (node) {
         if (!mode) mode="scan"
-        var attribs=["href","src"];
+        var attribs=["href","src", "data"];
         for( var attr of attribs) {
             if (node.hasAttribute(attr)) {
                 var url = new URL_class(node.getAttribute(attr))
                 if (url && notBlank(url.host)) {
-                    for( var rex of base_adRegEx){
+                    for( var i=0; i<JDBobj().length; i++) {
+                        var J =JDBobj()[i];
+                        var rex =J.link_rx;
                         if (url.host.match(rex)) {
-                            console.log("myAdBlock " + mode + " :" + url.host)
+                            console.log("new myAdBlock " + mode + " :" + url.host, rex)
                            // if (mode=="LIVE") { alert("got you")}
-                            node.setAttribute(attr, "javascript:void(0)")
+                            node.setAttribute("hidden_"+attr, url.str()) ; //"javascript:void(0)")
+                            node.setAttribute(attr, "about:blank") ; //"javascript:void(0)")
                             node.style.display ="none";
-                            actionLog()
+                            incrementBadgeCounter()
                             found=true;
                             continue;
                         }

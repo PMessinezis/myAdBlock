@@ -3,7 +3,7 @@
 
 
 var ADBLOCK_ENGINE=function(){
-    this.base_adRegEx=base_adRegEx;
+//    this.base_adRegEx=base_adRegEx;
 };
 
 ADBLOCK_ENGINE.prototype.scan=function(topNode) {
@@ -28,10 +28,10 @@ var timeOut;
 function pageFullyLoaded(){
     //console.log("DOM REALLY loaded");
     if (!timeOut)
-        timeOut=1000;
+        timeOut=100;
     else
-        timeOut+=1000;
-    if (myAdBlock.scan()){ timeOut=1000}
+        timeOut+=100;
+    if (myAdBlock.scan()){ timeOut=100}
     setTimeout(pageFullyLoaded, timeOut)
 }
 
@@ -85,6 +85,9 @@ if (chrome.webRequest) {
     };
     myObserve(document);
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+  myAdBlock.scan() } )
 
 function menuHandlerAB(e,t){
     var  menuID=e.menuItemId;

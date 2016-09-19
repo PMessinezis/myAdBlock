@@ -1,6 +1,6 @@
 {
   "name": "My ad blocker Chrome Extension",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "manifest_version": 2,
   "description": "This extension was created by RedocTsuj",
   "homepage_url": "https://bitbucket.org/RedocTsuj/myadblock",
