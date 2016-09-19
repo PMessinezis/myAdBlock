@@ -7,7 +7,7 @@ chrome.runtime.onMessage.addListener(
                 "from a content script:" + sender.tab.url :
                 "from the extension");
     if (request.message == "incrementBadgeCounter")
-      incrementBadgeCounter({color:[240, 0, 0, 125]});
+      incrementBadgeCounter({color:[240, 0, 0, 125]}); 
   });
 
 
@@ -144,7 +144,7 @@ function scanNode(node,mode){
                         var rex =J.link_rx;
                         if (url.host.match(rex)) {
                             console.log("new myAdBlock " + mode + " :" + url.host, rex)
-                           // if (mode=="LIVE") { alert("got you")}
+                            // if (mode=="LIVE") { alert("got you")}
                             node.setAttribute("hidden_"+attr, url.str()) ; //"javascript:void(0)")
                             node.setAttribute(attr, "about:blank") ; //"javascript:void(0)")
                             node.style.display ="none";
