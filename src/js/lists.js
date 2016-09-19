@@ -49,7 +49,12 @@ JDBstr = '[  \
                { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "\.mgid\." }, \
                { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "wwwpromotr" } ] ';
 
+JDBWhiteStr = '[ \
+                ]'
+
 gJDBobj = null ;
+gJDBWLobj = null;
+
 
 function JDBobj(){
     if (gJDBobj == null) {
@@ -61,14 +66,51 @@ function JDBobj(){
             JDB[i].node_rx= new RegExp(J.node_rx);
             JDB[i].link_rx= new RegExp(J.link_rx);
         }
-        console.log(JDB);        
+        gJDBobj=JDB;  
+        console.log(gJDBobj);      
     }
     return gJDBobj ;
 }
 
+function JDBWLobj(){
+    if (gJDBWLobj == null) {
+        var JDB=fromJson(JDBWhiteStr);
+        console.log(JDB);        
+        for ( i=0 ; i< JDB.length ; i++ ) {
+            var J = JDB[i];
+            JDB[i]= new RegExp(J);
+        }
+        gJDBWLobj=JDB;  
+        console.log(gJDBWLobj);   
+    }
+    return gJDBWLobj ;
+}
 
+
+function newCheckIt(request,b,c){
+var u = request.url;
+var w = window.location.href;
+    for( var i=0; i<JDBWLobj().length; i++) {
+        var rex =JDBWLobj()[i];
+        if ( w.match(rex)) {
+            console.log("skip check - in WhiteList : " + w);
+        }
+    }
+    if(u) {
+        //log("check:" + u);
+        for( var i=0; i<JDBobj().length; i++) {
+            var J =JDBobj()[i];
+            var rex =J.link_rx;
+            if ( u.match(rex)) {
+                console.log("new checking - caught : " + u,rex);
+                return { cancel: true}
+            }
+        }
+    }
+}
 
 function checkIt(request,b,c){
+var newRes=newCheckIt(request,b,c) ;
 var u = request.url;
     if(u) {
   //  log("check:" + u);
