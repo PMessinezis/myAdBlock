@@ -1,13 +1,64 @@
 // handle lists (blacklist and whitelist) as well as init from central web server
 
 
+var LastClicked = null;
+
+$('*').mousedown( function(e) {
+        if (e.which == 3 ) { LastClicked=htmlnode(e.target);
+            console.log("Node right-clicked" , LastClicked); 
+        }
+    });
+
+/*
+$(function() {
+    $('*').on('contextmenu', function(e) {
+        LastClicked=htmlnode(e.target);
+        console.log("Menu Clicked" , LastClicked);
+    });
+});
+
+*/
+
+function getNodeDetails(aNode){
+    var l=[]
+    var p=null
+    if (aNode) {
+        var d = null
+        p=aNode.parentNode;
+        d={id : aNode.id, nodeName : aNode.nodeName, 
+           nodeType : aNode.nodeType , className : aNode.className }
+        var attributes = []
+        if (aNode.attributes) {
+            for (var i = 0; i < aNode.attributes.length; i++) {
+            var attr={
+            name : aNode.attributes[i].name,
+            value : aNode.attributes[i].value }
+            attributes.push(attr);
+            }
+        }
+        d.attributes = attributes;
+        l.push(d);
+    }
+    var pl = p ? getNodeDetails(p) : [] ;
+    return l.concat(pl);
+}
+
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     console.log(sender.tab ?
                 "from a content script:" + sender.tab.url :
-                "from the extension");
-    if (request.message == "incrementBadgeCounter")
+                "from the extension", var_dump(request));
+    if (request.message == "incrementBadgeCounter") {
       incrementBadgeCounter({color:[240, 0, 0, 125]}); 
+    } else if (request.message == "getLastClicked") {
+        console.log("Checking" , LastClicked);
+        var details=getNodeDetails(LastClicked);
+        console.log(details);
+        sendResponse({result: details});
+    } else if (request.message == "LastClicked") {
+        console.log(var_dump(LastClicked));
+        console.log(var_dump(request.node));
+    }
   });
 
 

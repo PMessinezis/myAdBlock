@@ -95,7 +95,12 @@ function menuHandlerAB(e,t){
     if (!sel) sel="";
     var tabID= "";
     if (t) tabID=t.id;
-    console.log(var_dump(e),var_dump(t));
+    console.log(e,t,e.target);
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+        chrome.tabs.sendMessage(tabs[0].id, {message: "getLastClicked"}, function(response) {
+            console.log("received clicked node" , response);
+        });  
+    });
 }
 
 //
@@ -103,9 +108,8 @@ function menuHandlerAB(e,t){
 //
 
 function createMenuItemsAB(){
-var contexts = ["page","selection","link","editable","image","video",
-                "audio"];
-var parent = chrome.contextMenus.create({"id" : "TellMe", "title" : "Tell me", "contexts":contexts, "onclick" : menuHandlerAB});
+var contexts = ["all"];
+var parent = chrome.contextMenus.create({"id" : "myAdBlockMenu", "title" : "myAdBlock", "contexts":contexts, "onclick" : menuHandlerAB});
 }
 
 if (chrome.contextMenus) createMenuItemsAB();
