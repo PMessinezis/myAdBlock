@@ -107,6 +107,7 @@ JDBstr = '[  \
                { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "adserver" }, \
                { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "^ad\." }, \
                { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "^adsite\." }, \
+               { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "ads3-adnow.com\." }, \
                { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "adservices" }, \
                { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "pagead\/js" }, \
                { "location_rx" : ".+", "node_rx" : ".+", "link_rx" : "steepto" }, \
@@ -186,6 +187,7 @@ function scanNode(node,mode){
     if (node) {
         if (!mode) mode="scan"
         var attribs=["href","src", "data"];
+        console.log(mode + ' : ' + node.nodeName);
         for( var attr of attribs) {
             if (node.hasAttribute(attr)) {
                 var url = new URL_class(node.getAttribute(attr))
@@ -199,6 +201,9 @@ function scanNode(node,mode){
                             node.setAttribute("hidden_"+attr, url.str()) ; //"javascript:void(0)")
                             node.setAttribute(attr, "about:blank") ; //"javascript:void(0)")
                             node.style.display ="none";
+                            node.className="";
+                            node.removeAttribute('class');
+                            node.removeAttribute('id');
                             incrementBadgeCounter()
                             found=true;
                             continue;
