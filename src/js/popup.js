@@ -9,7 +9,7 @@ function showOptions(){
     chrome.runtime.openOptionsPage();
 }
 
-console.log("loading popup");
+console_log("loading popup");
 
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('button#Show').addEventListener('click', showOptions);

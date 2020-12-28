@@ -5,7 +5,7 @@ var LastClicked = null;
 
 $('*').mousedown( function(e) {
         if (e.which == 3 ) { LastClicked=htmlnode(e.target);
-            console.log("Node right-clicked" , LastClicked); 
+            console_log("Node right-clicked" , LastClicked); 
         }
     });
 
@@ -13,7 +13,7 @@ $('*').mousedown( function(e) {
 $(function() {
     $('*').on('contextmenu', function(e) {
         LastClicked=htmlnode(e.target);
-        console.log("Menu Clicked" , LastClicked);
+        console_log("Menu Clicked" , LastClicked);
     });
 });
 
@@ -45,19 +45,19 @@ function getNodeDetails(aNode){
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    console.log(sender.tab ?
+    console_log(sender.tab ?
                 "from a content script:" + sender.tab.url :
                 "from the extension", var_dump(request));
     if (request.message == "incrementBadgeCounter") {
       incrementBadgeCounter({color:[240, 0, 0, 125]}); 
     } else if (request.message == "getLastClicked") {
-        console.log("Checking" , LastClicked);
+        console_log("Checking" , LastClicked);
         var details=getNodeDetails(LastClicked);
-        console.log(details);
+        console_log(details);
         sendResponse({result: details});
     } else if (request.message == "LastClicked") {
-        console.log(var_dump(LastClicked));
-        console.log(var_dump(request.node));
+        console_log(var_dump(LastClicked));
+        console_log(var_dump(request.node));
     }
   });
 
@@ -130,7 +130,7 @@ gJDBWLobj = null;
 function JDBobj(){
     if (gJDBobj == null) {
         var JDB=fromJson(JDBstr);
-        console.log(JDB);        
+        console_log(JDB);        
         for ( i=0 ; i< JDB.length ; i++ ) {
             var J = JDB[i];
             JDB[i].location_rx= new RegExp(J.location_rx);
@@ -138,7 +138,7 @@ function JDBobj(){
             JDB[i].link_rx= new RegExp(J.link_rx);
         }
         gJDBobj=JDB;  
-        console.log(gJDBobj);      
+        console_log(gJDBobj);      
     }
     return gJDBobj ;
 }
@@ -146,13 +146,13 @@ function JDBobj(){
 function JDBWLobj(){
     if (gJDBWLobj == null) {
         var JDB=fromJson(JDBWhiteStr);
-        console.log(JDB);        
+        console_log(JDB);        
         for ( i=0 ; i< JDB.length ; i++ ) {
             var J = JDB[i];
             JDB[i]= new RegExp(J);
         }
         gJDBWLobj=JDB;  
-        console.log(gJDBWLobj);   
+        console_log(gJDBWLobj);   
     }
     return gJDBWLobj ;
 }
@@ -163,8 +163,8 @@ var u = request.url;
 var w = window.location.href;
     for( var i=0; i<JDBWLobj().length; i++) {
         var rex =JDBWLobj()[i];
-        if ( w.match(rex)) {
-            console.log("skip check - in WhiteList : " + w);
+        if (w.match(rex)) {
+            return 
         }
     }
     if(u) {
@@ -173,7 +173,7 @@ var w = window.location.href;
             var J =JDBobj()[i];
             var rex =J.link_rx;
             if ( u.match(rex)) {
-                console.log("new checking - caught : " + u,rex);
+                console_log("new checking - caught : " + u,rex);
                 incrementBadgeCounter()
                 return { cancel: true}
             }
@@ -187,7 +187,7 @@ function scanNode(node,mode){
     if (node) {
         if (!mode) mode="scan"
         var attribs=["href","src", "data"];
-        console.log(mode + ' : ' + node.nodeName);
+        console_log(mode + ' : ' + node.nodeName);
         for( var attr of attribs) {
             if (node.hasAttribute(attr)) {
                 var url = new URL_class(node.getAttribute(attr))
@@ -196,7 +196,7 @@ function scanNode(node,mode){
                         var J =JDBobj()[i];
                         var rex =J.link_rx;
                         if (url.host.match(rex)) {
-                            console.log("new myAdBlock " + mode + " :" + url.host, rex)
+                            console_log("new myAdBlock " + mode + " :" + url.host, rex)
                             // if (mode=="LIVE") { alert("got you")}
                             node.setAttribute("hidden_"+attr, url.str()) ; //"javascript:void(0)")
                             node.setAttribute(attr, "about:blank") ; //"javascript:void(0)")

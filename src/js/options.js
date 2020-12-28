@@ -67,7 +67,7 @@ function uploadQDumps(){
     }
 }
 
-log("Opening Options page");
+console_log("Opening Options page");
 
 
 assignFunc("button#list","click", function(e){ show(sKeys()) } )
@@ -80,4 +80,5 @@ assignFunc("button#saveAll","click", function(e){
 assignFunc("button#clearAll","click", function(e){ sFlush();show(sDumpJSON()) } )
 
 assignFunc("button#upload","click", function(e){ selectFile() } )
-assignFunc("button#feed","click", function(e){ uploadQDumps() } )
+
+

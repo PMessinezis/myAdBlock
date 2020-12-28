@@ -1,6 +1,7 @@
-
-
-
+function console_log(s)
+{
+    // console.log(s);
+}
 
 var ADBLOCK_ENGINE=function(){
 //    this.base_adRegEx=base_adRegEx;
@@ -20,13 +21,13 @@ ADBLOCK_ENGINE.prototype.scan=function(topNode) {
 var myAdBlock=new ADBLOCK_ENGINE;
 
 function theDomIsLoading(){
-    console.log("DOM loading");
+    console_log("DOM loading");
     myAdBlock.scan()
 }
 
 var timeOut;
 function pageFullyLoaded(){
-    //console.log("DOM REALLY loaded");
+    //console_log("DOM REALLY loaded");
     if (!timeOut)
         timeOut=100;
     else
@@ -38,10 +39,10 @@ function pageFullyLoaded(){
 
 
 function checkMutation(mutation){
-    //console.log ("checking mutation " + mutation.type);
+    //console_log ("checking mutation " + mutation.type);
     for (var i = 0; i < mutation.addedNodes.length; i++) {
         var newNode=mutation.addedNodes[i];
-        //console.log(newNode.nodeName, newNode.tagName);
+        //console_log(newNode.nodeName, newNode.tagName);
         if (newNode.nodeName=="IFRAME" ) { //|| newNode.nodeName=="SCRIPT") {
             myObserve(newNode);
         }
@@ -64,24 +65,24 @@ function checkMutations(mutations){
 
 function myObserve(node){
     var observer = new WebKitMutationObserver( checkMutations );
-    console.log("Observing " + node.toString());
+    console_log("Observing " + node.toString());
     observer.observe(node, { subtree: true, childList: true, attributes: true });
 }
 
-console.log("Adding listeners " + location.host)
+console_log("Adding listeners " + location.host)
 
 if (chrome.webRequest) {
-    console.log("Adding webrequest listener " + location.host)
+    console_log("Adding webrequest listener " + location.host)
     var callback = function(details) {return checkIt(details)};
     var filter = {urls: ["<all_urls>"]};
     var opt_extraInfoSpec = ["blocking"];
     chrome.webRequest.onBeforeRequest.addListener(callback, filter, opt_extraInfoSpec);
 } else {
-    console.log("Adding element creation and document loaded listeners " + location.host)
+    console_log("Adding element creation and document loaded listeners " + location.host)
     theDomIsLoading();
     document.onreadystatechange = function () {
         if (document.readyState == "complete") {
-            console.log("event fired") ; pageFullyLoaded(); }
+            console_log("event fired") ; pageFullyLoaded(); }
     };
     myObserve(document);
 }
@@ -95,10 +96,10 @@ function menuHandlerAB(e,t){
     if (!sel) sel="";
     var tabID= "";
     if (t) tabID=t.id;
-    console.log(e,t,e.target);
+    console_log(e,t,e.target);
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
         chrome.tabs.sendMessage(tabs[0].id, {message: "getLastClicked"}, function(response) {
-            console.log("received clicked node" , response);
+            console_log("received clicked node" , response);
         });  
     });
 }
